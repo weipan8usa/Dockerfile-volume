@@ -39,4 +39,4 @@ EOF
 
 #CMD ["/bin/bash"]
 #CMD ["/usr/sbin/service", "smbd", "start"]
-CMD service smbd start ;sleep 1000000000000
+CMD service smbd start;service cron start ;sleep 1000000000000
