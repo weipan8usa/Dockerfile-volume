@@ -2,8 +2,8 @@ FROM ubuntu
 
 ARG USER=filer
 
-RUN mkdir /PRIMARY_DRIVE /SECONDARY_DRIVE 
-VOLUME [/PRIMARY_DRIVE, /SECONDARY_DRIVE]
+#RUN mkdir /PRIMARY /SECONDARY 
+VOLUME ["/PRIMARY", "/SECONDARY"]
 
 RUN apt update && apt install -y vim samba systemd
 
@@ -19,15 +19,15 @@ RUN pdbedit -a ${USER} <<"!"
 !
 
 RUN cat <<EOF >> /etc/samba/smb.conf 
-[PRIMARY_DRIVE]
+[PRIMARY]
     comment = PRIMARY
-    path = /PRIMARY_DRIVE
+    path = /PRIMARY
     read only = no
     browsable = yes
 
-[SECONDARY_DRIVE] 
+[SECONDARY] 
     comment = "SECONDARY"
-    path = /SECONDARY_DRIVE
+    path = /SECONDARY
     read only = no
     browsable = yes
 EOF
