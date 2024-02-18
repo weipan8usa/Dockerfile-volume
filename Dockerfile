@@ -126,6 +126,27 @@ HISTORY_DIR="/SECONDARY/HISTORY"
 EXCLUDE=" -path ./Exclude -prune  -o "
 EOF
 
+RUN su - ${USER} -c "cat >> ~${USER}/push.sh" <<EOF
+git add *
+git commit -v -m "\$(date +'%YY%m%d:%H%M%S')"
+git push -u origin pao_Family
+EOF
+
+
+RUN su - ${USER} -c "cat >> ~${USER}/sync.sh" <<EOF
+#!/bin/bash
+CONFIG_FILE=\${1:-\$PWD/config.conf}
+source \$CONFIG_FILE
+
+#rsync -av  /Data/blk161/HOME /Data02
+#rsync -avz --delete /Data/blk161/HOME /Data02
+
+#rsync -avz --delete \$SOURCE_DIR \${BACKUP_DIR%/*}
+rsync -avz --delete \$SOURCE_DIR \${BACKUP_DIR}
+
+
+EOF
+
 #CMD ["/bin/bash"]
 #CMD ["/usr/sbin/service", "smbd", "start"]
 CMD service smbd start;service cron start ;sleep 1000000000000
