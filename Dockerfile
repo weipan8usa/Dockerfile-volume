@@ -126,11 +126,11 @@ HISTORY_DIR="/SECONDARY/HISTORY"
 EXCLUDE=" -path ./Exclude -prune  -o "
 EOF
 
-RUN su - ${USER} -c "cat >> ~${USER}/push.sh" <<EOF
-git add *
-git commit -v -m "\$(date +'%YY%m%d:%H%M%S')"
-git push -u origin pao_Family
-EOF
+#RUN su - ${USER} -c "cat >> ~${USER}/push.sh" <<EOF
+#git add *
+#git commit -v -m "\$(date +'%YY%m%d:%H%M%S')"
+#git push -u origin pao_Family
+#EOF
 
 
 RUN su - ${USER} -c "cat >> ~${USER}/sync.sh" <<EOF
@@ -145,6 +145,13 @@ source \$CONFIG_FILE
 rsync -avz --delete \$SOURCE_DIR \${BACKUP_DIR}
 
 
+EOF
+
+RUN su - ${USER} -c "cat >> ~${USER}/README.md" <<EOF
+# new_ver_Container_Daily_backup_Script
+it is a major upgrade 2021-01-16
+1) it can run multiple basename, ie Family and Media at same time
+2) it will not backup files cross mount point
 EOF
 
 #CMD ["/bin/bash"]
