@@ -126,17 +126,6 @@ HISTORY_DIR="/SECONDARY/HISTORY"
 EXCLUDE=" -path ./Exclude -prune  -o "
 EOF
 
-===== Find out update of BACKUP to ARCHIVE and move them to slice
-1. cd to ARCHIVE
-2. generate a file list of ARCHIVE
-3. use this list to find out difference of ARCHIVE and BACKUP based on ARCHIVE
-4. move out the files of ARCHIVE to a slice fold which are different to BACKUP or no longer exist in BACKUP.
-===== Sync BACKUP to ARCHIVE
-5. cd to BACKUP
-6. generate a file list of BACKUP.
-7. compare BACKUP to ARCHIVE based on BACKUP.
-8. cp those different files in BACKUP to ARCHIVE.
-
 #CMD ["/bin/bash"]
 #CMD ["/usr/sbin/service", "smbd", "start"]
 CMD service smbd start;service cron start ;sleep 1000000000000
