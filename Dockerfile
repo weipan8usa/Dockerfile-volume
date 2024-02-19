@@ -102,6 +102,7 @@ done<\$BACKUP_FILE_LIST-\$SOURCE_DIR_BASE_NAME>\$NEED_TO_CP_TO_SLICE_LIST-\$SOUR
 mv \$NEED_TO_CP_TO_SLICE_LIST-\$SOURCE_DIR_BASE_NAME \$HISTORY_DIR/\$slice
 mv \$BACKUP_FILE_LIST-\$SOURCE_DIR_BASE_NAME \$HISTORY_DIR/\$slice
 EOF
+RUN su - ${USER} -c "chmod u+x 02.sh"
 
 RUN su - ${USER} -c "cat >> ~${USER}/new" <<EOF
 ===== Find out update of BACKUP to ARCHIVE and move them to slice
@@ -150,6 +151,7 @@ rsync -avz --delete \$SOURCE_DIR \${BACKUP_DIR}
 
 
 EOF
+RUN su - ${USER} -c "chmod u+x sync.sh"
 
 RUN su - ${USER} -c "cat >> ~${USER}/README.md" <<EOF
 # new_ver_Container_Daily_backup_Script
