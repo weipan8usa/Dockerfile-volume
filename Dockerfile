@@ -1,9 +1,9 @@
 FROM ubuntu
 
-ARG USER=filer
+#ARG USER=filer
+ENV USER=filer
 
 #RUN mkdir /PRIMARY /SECONDARY 
-RUN mkdir /PRIMARY /SECONDARY
 VOLUME ["/PRIMARY", "/SECONDARY"]
 
 RUN apt update && apt install -y vim samba systemd
@@ -19,7 +19,7 @@ RUN pdbedit -a ${USER} <<"!"
 521161
 !
 
-RUN chown -R ${USER}:${USER} "/PRIMARY" "/SECONDARY"
+#RUN chown -R ${USER}:${USER} "/PRIMARY" "/SECONDARY"
 
 RUN cat <<EOF >> /etc/samba/smb.conf 
 [PRIMARY]
@@ -161,4 +161,4 @@ EOF
 
 #CMD ["/bin/bash"]
 #CMD ["/usr/sbin/service", "smbd", "start"]
-CMD service smbd start;service cron start ;sleep 1000000000000
+CMD chown filer:filer /PRIMARY /SECONDARY;service smbd start;service cron start ;sleep 1000000000000
