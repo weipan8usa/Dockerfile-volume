@@ -3,6 +3,7 @@ FROM ubuntu
 ARG USER=filer
 
 #RUN mkdir /PRIMARY /SECONDARY 
+RUN mkdir /PRIMARY /SECONDARY
 VOLUME ["/PRIMARY", "/SECONDARY"]
 
 RUN apt update && apt install -y vim samba systemd
@@ -17,6 +18,8 @@ RUN pdbedit -a ${USER} <<"!"
 521161
 521161
 !
+
+RUN chown -R ${USER}:${USER} "/PRIMARY" "/SECONDARY"
 
 RUN cat <<EOF >> /etc/samba/smb.conf 
 [PRIMARY]
@@ -53,6 +56,7 @@ cd \$BACKUP_DIR_TO_FOLDER
 find . -mount \${EXCLUDE:- } -type f -print >\$BACKUP_FILE_LIST-\$SOURCE_DIR_BASE_NAME
 #echo \$BACKUP_FILE_LIST-\$SOURCE_DIR_BASE_NAME
 EOF
+RUN su - ${USER} -c "chmod u+x 01.sh"
 
 RUN su - ${USER} -c "cat >> ~${USER}/02.sh" <<EOF
 #!/bin/bash
@@ -153,6 +157,7 @@ it is a major upgrade 2021-01-16
 1) it can run multiple basename, ie Family and Media at same time
 2) it will not backup files cross mount point
 EOF
+
 
 #CMD ["/bin/bash"]
 #CMD ["/usr/sbin/service", "smbd", "start"]
