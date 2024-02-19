@@ -6,7 +6,7 @@ ENV USER=filer
 #RUN mkdir /PRIMARY /SECONDARY 
 VOLUME ["/PRIMARY", "/SECONDARY"]
 
-RUN apt update && apt install -y vim samba systemd
+RUN apt update && apt install -y vim samba systemd rsync
 
 RUN useradd -m -s /bin/bash ${USER} 
 RUN passwd ${USER} <<"!"
