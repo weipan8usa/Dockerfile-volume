@@ -33,6 +33,19 @@ RUN cat <<EOF >> /etc/samba/smb.conf
     path = /SECONDARY
     read only = no
     browsable = yes
+
+[HISTORY]
+  comment "HISTORY on /SECONDARY"
+  writable = no
+  valid users = blk161
+  path = /SECONDARY/HISTORY
+
+[HISTORY_SYNC]
+  comment "Backup of HISTORY Sync on /PRIMARY"
+  writable = no
+  valid users = blk161
+  path = /PRIMARY/HISTORY/
+
 EOF
 
 RUN su - ${USER} -c crontab <<EOF 
