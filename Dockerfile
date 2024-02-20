@@ -36,8 +36,8 @@ RUN cat <<EOF >> /etc/samba/smb.conf
 EOF
 
 RUN su - ${USER} -c crontab <<EOF 
-0 5 * * * { cd /home/${USER}/pao_Data/;./01.sh ./Data_config.conf;./02.sh ./Data_config.conf;./sync.sh ./Data_config.conf; }
-0 17 * * * rsync -avz --delete   /SECONDARY/HISTORY/* /PRIMARY/HISTORY_SYNC
+0 5 * * * { cd /home/${USER}/;./01.sh ./Data_config.conf;./02.sh ./Data_config.conf;./sync.sh ./Data_config.conf; }
+0 17 * * * rsync -avz --delete   /SECONDARY/HISTORY/* /PRIMARY/HISTORY
 EOF
 
 RUN su - ${USER} -c "cat >> ~${USER}/01.sh" <<EOF
