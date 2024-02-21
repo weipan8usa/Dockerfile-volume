@@ -19,43 +19,41 @@ RUN pdbedit -a ${USER} <<"!"
 521161
 !
 
-#RUN chown -R ${USER}:${USER} "/PRIMARY" "/SECONDARY"
-
 RUN cat <<EOF >> /etc/samba/smb.conf 
 [PRIMARY]
-    comment = PRIMARY
-    path = /PRIMARY
-    read only = no
-    browsable = yes
+  comment = PRIMARY
+  path = /PRIMARY
+  read only = no
+  browsable = yes
+#  valid users = blk161
 
 [SECONDARY] 
-    comment = "SECONDARY"
-    path = /SECONDARY
-    read only = no
-    browsable = yes
+  comment = "SECONDARY"
+  path = /SECONDARY
+  read only = yes 
+  browsable = yes
+#  valid users = blk161
 
 [HISTORY]
   comment "HISTORY on /SECONDARY"
   writable = no
-  valid users = blk161
+#  valid users = blk161
   path = /SECONDARY/HISTORY
 
 [HISTORY_SYNC]
   comment "Backup of HISTORY Sync on /PRIMARY"
   writable = no
-  valid users = blk161
+#  valid users = blk161
   path = /PRIMARY/HISTORY/
 
 EOF
 
 USER ${USER}
-#RUN su - ${USER} -c crontab <<EOF 
 RUN crontab <<EOF 
 0 5 * * * { cd /home/${USER}/;./01.sh ./Data_config.conf;./02.sh ./Data_config.conf;./sync.sh ./Data_config.conf; }
 0 17 * * * rsync -avz --delete   /SECONDARY/HISTORY/* /PRIMARY/HISTORY
 EOF
 
-#RUN su - ${USER} -c "cat >> ~${USER}/01.sh" <<EOF
 RUN cat >> $HOME/01.sh <<EOF
 #!/bin/bash
 set -x
@@ -73,9 +71,8 @@ find . -mount \${EXCLUDE:- } -type f -print >\$BACKUP_FILE_LIST-\$SOURCE_DIR_BAS
 #echo \$BACKUP_FILE_LIST-\$SOURCE_DIR_BASE_NAME
 EOF
 
-#RUN su - ${USER} -c "chmod u+x 01.sh"
+RUN chmod u+x $HOME/01.sh
 
-#RUN su - ${USER} -c "cat >> ~${USER}/02.sh" <<EOF
 RUN cat >> $HOME/02.sh <<EOF
 #!/bin/bash
 set -x
@@ -120,9 +117,8 @@ done<\$BACKUP_FILE_LIST-\$SOURCE_DIR_BASE_NAME>\$NEED_TO_CP_TO_SLICE_LIST-\$SOUR
 mv \$NEED_TO_CP_TO_SLICE_LIST-\$SOURCE_DIR_BASE_NAME \$HISTORY_DIR/\$slice
 mv \$BACKUP_FILE_LIST-\$SOURCE_DIR_BASE_NAME \$HISTORY_DIR/\$slice
 EOF
-#RUN su - ${USER} -c "chmod u+x 02.sh"
+RUN chmod u+x $HOME/02.sh
 
-#RUN su - ${USER} -c "cat >> ~${USER}/new" <<EOF
 RUN cat >> $HOME/new <<EOF
 ===== Find out update of BACKUP to ARCHIVE and move them to slice
 1. cd to ARCHIVE
@@ -136,7 +132,6 @@ RUN cat >> $HOME/new <<EOF
 8. cp those different files in BACKUP to ARCHIVE.
 EOF
 
-#RUN su - ${USER} -c "cat >> ~${USER}/Data_config.conf" <<EOF
 RUN cat >> $HOME/Data_config.conf <<EOF
 # BACKUP_DIR is the source
 # ARCHIVE_DIR is the destination
@@ -151,14 +146,6 @@ HISTORY_DIR="/SECONDARY/HISTORY"
 EXCLUDE=" -path ./Exclude -prune  -o "
 EOF
 
-#RUN su - ${USER} -c "cat >> ~${USER}/push.sh" <<EOF
-#git add *
-#git commit -v -m "\$(date +'%YY%m%d:%H%M%S')"
-#git push -u origin pao_Family
-#EOF
-
-
-#RUN su - ${USER} -c "cat >> ~${USER}/sync.sh" <<EOF
 RUN cat >> $HOME/sync.sh <<EOF
 #!/bin/bash
 CONFIG_FILE=\${1:-\$PWD/config.conf}
@@ -172,9 +159,8 @@ rsync -avz --delete \$SOURCE_DIR \${BACKUP_DIR}
 
 
 EOF
-#RUN su - ${USER} -c "chmod u+x sync.sh"
+RUN chmod u+x $HOME/sync.sh
 
-#RUN su - ${USER} -c "cat >> ~${USER}/README.md" <<EOF
 RUN cat >> $HOME/README.md <<EOF
 # new_ver_Container_Daily_backup_Script
 it is a major upgrade 2021-01-16
