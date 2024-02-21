@@ -48,12 +48,15 @@ RUN cat <<EOF >> /etc/samba/smb.conf
 
 EOF
 
-RUN su - ${USER} -c crontab <<EOF 
+USER ${USER}
+#RUN su - ${USER} -c crontab <<EOF 
+RUN crontab <<EOF 
 0 5 * * * { cd /home/${USER}/;./01.sh ./Data_config.conf;./02.sh ./Data_config.conf;./sync.sh ./Data_config.conf; }
 0 17 * * * rsync -avz --delete   /SECONDARY/HISTORY/* /PRIMARY/HISTORY
 EOF
 
-RUN su - ${USER} -c "cat >> ~${USER}/01.sh" <<EOF
+#RUN su - ${USER} -c "cat >> ~${USER}/01.sh" <<EOF
+RUN cat >> $HOME/01.sh <<EOF
 #!/bin/bash
 set -x
 CONFIG_FILE=\${1:-\$PWD/config.conf}
@@ -69,9 +72,11 @@ cd \$BACKUP_DIR_TO_FOLDER
 find . -mount \${EXCLUDE:- } -type f -print >\$BACKUP_FILE_LIST-\$SOURCE_DIR_BASE_NAME
 #echo \$BACKUP_FILE_LIST-\$SOURCE_DIR_BASE_NAME
 EOF
-RUN su - ${USER} -c "chmod u+x 01.sh"
 
-RUN su - ${USER} -c "cat >> ~${USER}/02.sh" <<EOF
+#RUN su - ${USER} -c "chmod u+x 01.sh"
+
+#RUN su - ${USER} -c "cat >> ~${USER}/02.sh" <<EOF
+RUN cat >> $HOME/02.sh <<EOF
 #!/bin/bash
 set -x
 #source ~surrey/pao02/config.conf
@@ -115,9 +120,10 @@ done<\$BACKUP_FILE_LIST-\$SOURCE_DIR_BASE_NAME>\$NEED_TO_CP_TO_SLICE_LIST-\$SOUR
 mv \$NEED_TO_CP_TO_SLICE_LIST-\$SOURCE_DIR_BASE_NAME \$HISTORY_DIR/\$slice
 mv \$BACKUP_FILE_LIST-\$SOURCE_DIR_BASE_NAME \$HISTORY_DIR/\$slice
 EOF
-RUN su - ${USER} -c "chmod u+x 02.sh"
+#RUN su - ${USER} -c "chmod u+x 02.sh"
 
-RUN su - ${USER} -c "cat >> ~${USER}/new" <<EOF
+#RUN su - ${USER} -c "cat >> ~${USER}/new" <<EOF
+RUN cat >> $HOME/new <<EOF
 ===== Find out update of BACKUP to ARCHIVE and move them to slice
 1. cd to ARCHIVE
 2. generate a file list of ARCHIVE
@@ -130,7 +136,8 @@ RUN su - ${USER} -c "cat >> ~${USER}/new" <<EOF
 8. cp those different files in BACKUP to ARCHIVE.
 EOF
 
-RUN su - ${USER} -c "cat >> ~${USER}/Data_config.conf" <<EOF
+#RUN su - ${USER} -c "cat >> ~${USER}/Data_config.conf" <<EOF
+RUN cat >> $HOME/Data_config.conf <<EOF
 # BACKUP_DIR is the source
 # ARCHIVE_DIR is the destination
 
@@ -151,7 +158,8 @@ EOF
 #EOF
 
 
-RUN su - ${USER} -c "cat >> ~${USER}/sync.sh" <<EOF
+#RUN su - ${USER} -c "cat >> ~${USER}/sync.sh" <<EOF
+RUN cat >> $HOME/sync.sh <<EOF
 #!/bin/bash
 CONFIG_FILE=\${1:-\$PWD/config.conf}
 source \$CONFIG_FILE
@@ -164,16 +172,17 @@ rsync -avz --delete \$SOURCE_DIR \${BACKUP_DIR}
 
 
 EOF
-RUN su - ${USER} -c "chmod u+x sync.sh"
+#RUN su - ${USER} -c "chmod u+x sync.sh"
 
-RUN su - ${USER} -c "cat >> ~${USER}/README.md" <<EOF
+#RUN su - ${USER} -c "cat >> ~${USER}/README.md" <<EOF
+RUN cat >> $HOME/README.md <<EOF
 # new_ver_Container_Daily_backup_Script
 it is a major upgrade 2021-01-16
 1) it can run multiple basename, ie Family and Media at same time
 2) it will not backup files cross mount point
 EOF
 
-
+USER root
 #CMD ["/bin/bash"]
 #CMD ["/usr/sbin/service", "smbd", "start"]
 CMD chown -R ${USER}:${USER} /PRIMARY /SECONDARY;service smbd start;service cron start ;sleep 1000000000000
