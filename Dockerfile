@@ -171,4 +171,4 @@ EOF
 USER root
 #CMD ["/bin/bash"]
 #CMD ["/usr/sbin/service", "smbd", "start"]
-CMD chown -R ${USER}:${USER} /PRIMARY /SECONDARY;service smbd start;service cron start ;sleep 1000000000000
+CMD chown -R ${USER}:${USER} /PRIMARY /SECONDARY;service smbd start;service cron start ;while true; do sleep 1000000000000;done
